@@ -225,6 +225,45 @@ protected:
   boost::function<void(T value)> callback_;
 };
 
+template <typename T>
+class CallbackRegisteredValueCallbackParam : public RegisteredParam<T>
+{
+public:
+  CallbackRegisteredValueCallbackParam(const std::string &name, const std::string &description, T min_value,
+                          T max_value, boost::function<T(void)> current_value_callback,
+						  boost::function<void(T value)> callback,
+                          const std::string group = "")
+    : RegisteredParam<T>(name, description, min_value, max_value, std::map<std::string, T>(), "", group)
+    , current_value_callback_(current_value_callback)
+    , callback_(callback)
+  {
+  }
+
+  CallbackRegisteredValueCallbackParam(const std::string &name, const std::string &description, T min_value,
+                          T max_value, boost::function<T(void)> current_value_callback,
+						  boost::function<void(T value)> callback,
+                          std::map<std::string, T> enum_dictionary = {},
+                          const std::string &enum_description = "", const std::string group = "")
+    : RegisteredParam<T>(name, description, min_value, max_value, enum_dictionary, enum_description, group)
+    , current_value_callback_(current_value_callback)
+    , callback_(callback)
+  {
+  }
+
+  T getCurrentValue() const override
+  {
+    return current_value_callback_();
+  }
+
+  void updateValue(T new_value) override
+  {
+    callback_(new_value);
+  }
+
+protected:
+  boost::function<T(void)> current_value_callback_;
+  boost::function<void(T value)> callback_;
+};
 
 }  // namespace ddynamic_reconfigure
 
