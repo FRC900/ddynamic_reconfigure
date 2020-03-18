@@ -89,6 +89,24 @@ public:
                             const std::string &enum_description = "");
   
   /**
+   * @brief registerVariable register a variable to be modified via the
+   * dynamic_reconfigure API. When a change is made, the callback will be called with the
+   * new value. The current value is obtained by calling the callback_value_callback function
+   */
+  template <typename T>
+  void registerVariable(const std::string &name,
+                        const boost::function<T(void)> &current_value_callback,
+                        const boost::function<void(T value)> &callback,
+                        const std::string &description = "", T min = getMin<T>(), T max = getMax<T>());
+
+  template <typename T>
+  void registerEnumVariable(const std::string &name,
+                            const boost::function<T(void)> &current_value_callback,
+                            const boost::function<void(T)> &callback,
+                            const std::string &description,
+                            std::map<std::string, T> enum_dict = {},
+                            const std::string &enum_description = "");
+  /**
    * @brief publishServicesTopics starts the server once all the needed variables are
    * registered
    */

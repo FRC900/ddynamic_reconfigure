@@ -108,6 +108,35 @@ void DDynamicReconfigure::registerEnumVariable(const std::string &name, T curren
       name, description, min, max, current_value, callback, enum_dict, enum_description));
 }
 
+template <typename T>
+void DDynamicReconfigure::registerVariable(const std::string &name,
+                      const boost::function<T(void)> &current_value_callback,
+                      const boost::function<void(T value)> &callback,
+                      const std::string &description, T min, T max)
+{
+  T current_value = current_value_callback();
+  attemptGetParam(node_handle_, name, current_value, current_value);
+  getRegisteredVector<T>().push_back(boost::make_unique<CallbackRegisteredValueCallbackParam<T>>(
+      name, description, min, max, current_value_callback, callback));
+}
+
+
+template <typename T>
+void DDynamicReconfigure::registerEnumVariable(const std::string &name,
+                          const boost::function<T(void)> &current_value_callback,
+                          const boost::function<void(T)> &callback,
+                          const std::string &description,
+                          std::map<std::string, T> enum_dict,
+                          const std::string &enum_description)
+{
+  T min, max;
+  std::tie(min, max) = getMinMax(enum_dict);
+  T current_value = current_value_callback();
+  attemptGetParam(node_handle_, name, current_value, current_value);
+  getRegisteredVector<T>().push_back(boost::make_unique<CallbackRegisteredValueCallbackParam<T>>(
+      name, description, min, max, current_value_callback, callback, enum_dict, enum_description));
+}
+
 template <typename ParamType>
 bool confCompare(const ParamType &a, const ParamType &b)
 {
@@ -402,6 +431,17 @@ template void DDynamicReconfigure::registerEnumVariable(
     const boost::function<void(int)> &callback, const std::string &description,
     std::map<std::string, int> enum_dict, const std::string &enum_description);
 
+template void DDynamicReconfigure::registerVariable(const std::string &name,
+                                                    const boost::function<int(void)> &current_value_callback,
+                                                    const boost::function<void(int value)> &callback,
+                                                    const std::string &description,
+                                                    int min, int max);
+
+template void DDynamicReconfigure::registerEnumVariable(
+    const std::string &name, const boost::function<int(void)> &current_value_callback,
+    const boost::function<void(int)> &callback, const std::string &description,
+    std::map<std::string, int> enum_dict, const std::string &enum_description);
+
 
 //Explicit double instantations
 template void DDynamicReconfigure::registerVariable(const std::string &name, double *variable,
@@ -423,6 +463,16 @@ template void DDynamicReconfigure::registerEnumVariable(
     const boost::function<void(double)> &callback, const std::string &description,
     std::map<std::string, double> enum_dict, const std::string &enum_description);
 
+template void DDynamicReconfigure::registerVariable(const std::string &name,
+                                                    const boost::function<double(void)> &current_value_callback,
+                                                    const boost::function<void(double value)> &callback,
+                                                    const std::string &description,
+                                                    double min, double max);
+
+template void DDynamicReconfigure::registerEnumVariable(
+    const std::string &name, const boost::function<double(void)> &current_value_callback,
+    const boost::function<void(double)> &callback, const std::string &description,
+    std::map<std::string, double> enum_dict, const std::string &enum_description);
 
 
 
@@ -443,6 +493,17 @@ template void DDynamicReconfigure::registerVariable(const std::string &name, boo
 
 template void DDynamicReconfigure::registerEnumVariable(
     const std::string &name, bool current_value,
+    const boost::function<void(bool)> &callback, const std::string &description,
+    std::map<std::string, bool> enum_dict, const std::string &enum_description);
+
+template void DDynamicReconfigure::registerVariable(const std::string &name,
+                                                    const boost::function<bool(void)> &current_value_callback,
+                                                    const boost::function<void(bool value)> &callback,
+                                                    const std::string &description,
+                                                    bool min, bool max);
+
+template void DDynamicReconfigure::registerEnumVariable(
+    const std::string &name, const boost::function<bool(void)> &current_value_callback,
     const boost::function<void(bool)> &callback, const std::string &description,
     std::map<std::string, bool> enum_dict, const std::string &enum_description);
 
@@ -468,4 +529,14 @@ template void DDynamicReconfigure::registerEnumVariable(
     std::map<std::string, std::string> enum_dict, const std::string &enum_description);
 
 
+template void DDynamicReconfigure::registerVariable(const std::string &name,
+                                                    const boost::function<std::string (void)> &current_value_callback,
+                                                    const boost::function<void(std::string value)> &callback,
+                                                    const std::string &description,
+                                                    std::string min, std::string max);
+
+template void DDynamicReconfigure::registerEnumVariable(
+    const std::string &name, const boost::function<std::string (void)> &current_value_callback,
+    const boost::function<void(std::string)> &callback, const std::string &description,
+    std::map<std::string, std::string> enum_dict, const std::string &enum_description);
 }
