@@ -30,6 +30,11 @@ public:
   
   MOCK_METHOD1(boolCallback,
                void(bool));
+
+  MOCK_CONST_METHOD0(getStr, std::string());
+  MOCK_CONST_METHOD0(getDouble, double());
+  MOCK_CONST_METHOD0(getInt, int());
+  MOCK_CONST_METHOD0(getBool, bool());
   std::string str_param_;
   double double_param_;
   int int_param_;
