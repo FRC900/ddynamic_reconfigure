@@ -52,6 +52,39 @@ int main(int argc, char **argv) {
  }
 ```
 
+Both reading and modifying a variable via a callback :
+```cpp
+#include <ros/ros.h>
+#include <ddynamic_reconfigure/ddynamic_reconfigure.h>
+
+int global_int = 10;
+
+void setCb(int new_value)
+{
+   global_int = new_value;
+   ROS_INFO("Param modified");
+}
+
+int getCb(void)
+{
+   global_int = new_value;
+   ROS_INFO("Param modified");
+}
+
+int main(int argc, char **argv) {
+    // ROS init stage
+    ros::init(argc, argv, "ddynamic_tutorials");
+    ros::NodeHandle nh;
+    ddynamic_reconfigure::DDynamicReconfigure ddr;
+
+    ddr.registerVariable<int>("int_param", boost::bind(getCb, boost::bind(setCB, _1), "param description");
+    ddr.publishServicesTopics();
+    // Now parameter can be modified from the dynamic_reconfigure GUI or other tools and the callback is called on each update
+    ros::spin();
+    return 0;
+ }
+```
+
 Registering an enum:
 
 ```cpp
